@@ -1,0 +1,39 @@
+<!-- ideaMarcos -->
+
+<!-- livebook:{"autosave_interval_s":null} -->
+
+# KinoJspreadsheetCe
+
+```elixir
+Mix.install([
+  {:kino_jspreadsheet_ce, path: __DIR__},
+])
+```
+
+## Basic Example
+
+```elixir
+KinoJspreadsheetCe.new(
+  data: [
+    ["1", "DIVINELY UNINSPIRED TO A HELLISH EXTENT", "LEWIS CAPALDI"],
+    ["2", "NO 6 COLLABORATIONS PROJECT", "ED SHEERAN"],
+    ["3", "THE GREATEST SHOWMAN", "MOTION PICTURE CAST RECORDING"],
+    ["4", "WHEN WE ALL FALL ASLEEP WHERE DO WE GO", "BILLIE EILISH"]
+  ],
+  columns: [
+    %{type: "autonumber", title: "Id"},
+    %{type: "text", width: "350px", title: "Title"},
+    %{type: "text", width: "250px", title: "Artist"}
+  ],
+  toolbar: true,
+  tabs: true
+)
+```
+
+## Empty Worksheet
+
+```elixir
+KinoJspreadsheetCe.new(
+  min_dimensions: [7, 3]
+)
+```

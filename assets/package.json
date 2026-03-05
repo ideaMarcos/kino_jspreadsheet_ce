@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "esbuild main.js --bundle --minify --outfile=../lib/assets/build/main.js --format=esm",
+    "dev": "pnpm run build -- --watch"
+  },
+  "dependencies": {
+    "jspreadsheet-ce": "^5.0.4",
+    "jsuites": "^5.13.5"
+  },
+  "devDependencies": {
+    "@livebook/kino-bundler": "^0.2.1",
+    "esbuild": "^0.27.3"
+  }
+}
