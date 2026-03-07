@@ -6,14 +6,21 @@
 
 ```elixir
 Mix.install([
+  # {:kino_jspreadsheet_ce, "~> 0.1.0"},
   {:kino_jspreadsheet_ce, path: __DIR__},
 ])
+```
+
+## Empty Worksheet
+
+```elixir
+KinoJspreadsheetCe.new(min_dimensions: [7, 3])
 ```
 
 ## Basic Example
 
 ```elixir
-KinoJspreadsheetCe.new(
+s1 = KinoJspreadsheetCe.new(
   data: [
     ["1", "DIVINELY UNINSPIRED TO A HELLISH EXTENT", "LEWIS CAPALDI"],
     ["2", "NO 6 COLLABORATIONS PROJECT", "ED SHEERAN"],
@@ -25,15 +32,14 @@ KinoJspreadsheetCe.new(
     %{type: "text", width: "350px", title: "Title"},
     %{type: "text", width: "250px", title: "Artist"}
   ],
-  toolbar: true,
-  tabs: true
+  # context_menu: false,
+  # tabs: true,
+  toolbar: true
 )
 ```
 
-## Empty Worksheet
+## Reuse spreadsheet
 
 ```elixir
-KinoJspreadsheetCe.new(
-  min_dimensions: [7, 3]
-)
+s2 = KinoJspreadsheetCe.to_struct(s1)
 ```

@@ -1,6 +1,7 @@
 import jspreadsheet from 'jspreadsheet-ce';
 
-export function init(ctx, exPayload) {
+// export function init(ctx, exPayload) {
+export async function init(ctx, exPayload) {
 	[
 		'https://fonts.googleapis.com/css?family=Material+Icons',
 		'https://cdn.jsdelivr.net/npm/jspreadsheet-ce@5.0.4/dist/jspreadsheet.css',
@@ -8,20 +9,35 @@ export function init(ctx, exPayload) {
 	].forEach((url) => ctx.importCSS(url));
 
 	const payload = convertKeysToCamelCase(exPayload);
-	let worksheet = {
-		data: !!payload.data ? payload.data : undefined,
-		columns: !!payload.columns ? payload.columns : undefined,
-		minDimensions: !!payload.minDimensions ? payload.minDimensions : undefined,
-	};
+	let worksheet = {};
+	if (payload.columns) worksheet.columns = payload.columns;
+	if (payload.data) worksheet.data = payload.data;
+	if (payload.minDimensions) worksheet.minDimensions = payload.minDimensions;
 
-	const config = {
-		toolbar: !!payload.toolbar ? payload.toolbar : undefined,
+	const setDataEvent = (sheet, changes) =>
+		ctx.pushEvent('set_data', sheet.getData());
+	let config = {
 		worksheets: [worksheet],
+		onafterchanges: setDataEvent,
+		onchangeheader: setDataEvent,
+		ondeletecolumn: setDataEvent,
+		ondeleterow: setDataEvent,
+		oninsertcolumn: setDataEvent,
+		oninsertrow: setDataEvent,
+		onmerge: setDataEvent,
+		onmovecolumn: setDataEvent,
+		onmoverow: setDataEvent,
+		onsort: setDataEvent,
 	};
+	if (payload.contextMenu === false) config.contextMenu = () => false;
+	if (payload.tabs) config.tabs = payload.tabs;
+	if (payload.toolbar) config.toolbar = payload.toolbar;
 
-	const container = document.createElement('spreadsheet');
+	const container = document.createElement('div');
+	container.id = 'spreadsheet';
 	container.style.width = '100%';
 	container.style.height = 'auto';
+
 	ctx.root.appendChild(container);
 	jspreadsheet(container, config);
 }
@@ -43,6 +59,5 @@ function convertKeysToCamelCase(obj) {
 			]),
 		);
 	}
-
 	return obj;
 }
