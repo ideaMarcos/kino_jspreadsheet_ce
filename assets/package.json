@@ -1,8 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "build": "esbuild main.js --bundle --minify --outfile=../lib/assets/build/main.js --format=esm",
-    "dev": "pnpm run build -- --watch"
+    "build": "esbuild main.js --bundle --minify --outfile=../../lib/assets/build/main.js --format=esm --loader:.js=jsx",
+    "dev": "npm run build -- --watch"
   },
   "dependencies": {
     "jspreadsheet-ce": "^5.0.4",

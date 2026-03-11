@@ -4,6 +4,7 @@ defmodule KinoJspreadsheetCe.Application do
   use Application
 
   def start(_type, _args) do
+    Kino.SmartCell.register(KinoJspreadsheetCe.SmartCell)
     children = []
     opts = [strategy: :one_for_one, name: KinoJspreadsheetCe.Supervisor]
     Supervisor.start_link(children, opts)

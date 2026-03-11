@@ -17,7 +17,7 @@ defmodule KinoJspreadsheetCe do
 
     - `:data` - A list of lists representing the spreadsheet data. Each inner list is a row.
     - `:columns` - A list of column configurations. Defaults to auto-generated columns.
-    - `:min_dimensions` - An array `[rows, cols]` for minimum dimensions.
+    - `:min_dimensions` - An array `[cols, rows]` for minimum dimensions.
     - `:toolbar` - Boolean to show/hide the toolbar.
   """
 
@@ -29,18 +29,11 @@ defmodule KinoJspreadsheetCe do
 
   Takes keyword arguments for configuration.
   """
+
   def new(opts) when is_list(opts) do
     payload =
       opts
       |> Enum.into(%{})
-      |> normalize_options()
-
-    Kino.JS.Live.new(__MODULE__, payload)
-  end
-
-  def new(payload) when is_map(payload) do
-    payload =
-      payload
       |> normalize_options()
 
     Kino.JS.Live.new(__MODULE__, payload)
@@ -57,8 +50,10 @@ defmodule KinoJspreadsheetCe do
     }
   end
 
-  def to_struct(spreadsheet) do
-    Kino.JS.Live.call(spreadsheet, "to_struct")
+  def get_config_from_js(spreadsheet) do
+    Kino.JS.Live.call(spreadsheet, "get_config_from_js")
+    |> Map.to_list()
+    |> Enum.reject(fn {_, v} -> is_nil(v) end)
   end
 
   @impl true
@@ -74,12 +69,37 @@ defmodule KinoJspreadsheetCe do
      )}
   end
 
-  @impl true
-  def handle_connect(ctx) do
-    {:ok, to_spreadsheet_struct(ctx.assigns), ctx}
+  def from_config_to_explorable(config, use_first_row_as_header? \\ false) when is_list(config) do
+    data = Keyword.get(config, :data, [])
+    columns = Keyword.get(config, :columns, [])
+
+    headers =
+      cond do
+        use_first_row_as_header? and is_list(data) and data != [] ->
+          List.first(data)
+
+        is_list(columns) and columns != [] and
+            Enum.all?(columns, fn col -> Map.has_key?(col, :title) end) ->
+          Enum.map(columns, fn col -> col.title end)
+
+        is_list(data) and data != [] ->
+          Enum.map(1..length(data), fn x -> "col#{x}" end)
+
+        true ->
+          []
+      end
+
+    Enum.map(data, fn row ->
+      Enum.zip(headers, row) |> Enum.into(%{})
+    end)
   end
 
-  defp to_spreadsheet_struct(s) do
+  @impl true
+  def handle_connect(ctx) do
+    {:ok, to_js_payload(ctx.assigns), ctx}
+  end
+
+  defp to_js_payload(s) do
     %{
       data: s.data,
       columns: s.columns,
@@ -91,12 +111,19 @@ defmodule KinoJspreadsheetCe do
   end
 
   @impl true
-  def handle_event("set_data", data, ctx) do
-    {:noreply, assign(ctx, data: data)}
+  def handle_event("update_sheet", config, ctx) do
+    columns =
+      Enum.map(config["columns"], fn col ->
+        for {key, val} <- col, into: %{} do
+          {String.to_existing_atom(key), val}
+        end
+      end)
+
+    {:noreply, assign(ctx, data: config["data"], columns: columns)}
   end
 
   @impl true
-  def handle_call("to_struct", _from, ctx) do
-    {:reply, to_spreadsheet_struct(ctx.assigns), ctx}
+  def handle_call("get_config_from_js", _from, ctx) do
+    {:reply, to_js_payload(ctx.assigns), ctx}
   end
 end

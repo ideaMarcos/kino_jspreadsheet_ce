@@ -15,8 +15,10 @@ export async function init(ctx, exPayload) {
 	if (payload.minDimensions) worksheet.minDimensions = payload.minDimensions;
 
 	const setDataEvent = (sheet, changes) =>
-		ctx.pushEvent('set_data', sheet.getData());
+		ctx.pushEvent('update_sheet', sheet.getConfig());
+
 	let config = {
+		resize: 'both',
 		worksheets: [worksheet],
 		onafterchanges: setDataEvent,
 		onchangeheader: setDataEvent,
@@ -34,10 +36,7 @@ export async function init(ctx, exPayload) {
 	if (payload.toolbar) config.toolbar = payload.toolbar;
 
 	const container = document.createElement('div');
-	container.id = 'spreadsheet';
-	container.style.width = '100%';
-	container.style.height = 'auto';
-
+	container.style.minHeight = '400px'; // to fit the contextMenu
 	ctx.root.appendChild(container);
 	jspreadsheet(container, config);
 }
