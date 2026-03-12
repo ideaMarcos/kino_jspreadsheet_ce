@@ -14,22 +14,22 @@ export async function init(ctx, exPayload) {
 	if (payload.data) worksheet.data = payload.data;
 	if (payload.minDimensions) worksheet.minDimensions = payload.minDimensions;
 
-	const setDataEvent = (sheet, changes) =>
-		ctx.pushEvent('update_sheet', sheet.getConfig());
+	const worksheetUpdated = (ws, changes) =>
+		ctx.pushEvent('update_sheet', ws.getConfig());
 
 	let config = {
 		resize: 'both',
 		worksheets: [worksheet],
-		onafterchanges: setDataEvent,
-		onchangeheader: setDataEvent,
-		ondeletecolumn: setDataEvent,
-		ondeleterow: setDataEvent,
-		oninsertcolumn: setDataEvent,
-		oninsertrow: setDataEvent,
-		onmerge: setDataEvent,
-		onmovecolumn: setDataEvent,
-		onmoverow: setDataEvent,
-		onsort: setDataEvent,
+		onafterchanges: worksheetUpdated,
+		onchangeheader: worksheetUpdated,
+		ondeletecolumn: worksheetUpdated,
+		ondeleterow: worksheetUpdated,
+		oninsertcolumn: worksheetUpdated,
+		oninsertrow: worksheetUpdated,
+		onmerge: worksheetUpdated,
+		onmovecolumn: worksheetUpdated,
+		onmoverow: worksheetUpdated,
+		onsort: worksheetUpdated,
 	};
 	if (payload.contextMenu === false) config.contextMenu = () => false;
 	if (payload.tabs) config.tabs = payload.tabs;

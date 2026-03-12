@@ -27,22 +27,18 @@ defmodule KinoJspreadsheetCe.MixProject do
 
   defp deps do
     [
-      {:kino, "~> 0.16"},
+      {:kino, "~> 0.19.0"},
+      {:table, "~> 0.1.0"},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 
   defp docs do
     [
-      main: "components",
+      main: "demo",
       source_url: "https://github.com/ideamarcos/kino_jspreadsheet_ce",
       source_ref: "v#{@version}",
-      extras: ["guides/demo.livemd"],
-      groups_for_modules: [
-        Kinos: [
-          Kino.JspreadsheetCe
-        ]
-      ]
+      extras: ["guides/demo.livemd"]
     ]
   end
 

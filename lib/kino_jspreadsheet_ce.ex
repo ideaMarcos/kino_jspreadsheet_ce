@@ -20,7 +20,6 @@ defmodule KinoJspreadsheetCe do
     - `:min_dimensions` - An array `[cols, rows]` for minimum dimensions.
     - `:toolbar` - Boolean to show/hide the toolbar.
   """
-
   use Kino.JS, assets_path: "lib/assets/build"
   use Kino.JS.Live
 
@@ -29,6 +28,19 @@ defmodule KinoJspreadsheetCe do
 
   Takes keyword arguments for configuration.
   """
+
+  def new() do
+    new(min_dimensions: [1, 1])
+  end
+
+  def new(opts) when is_list(opts) do
+    payload =
+      opts
+      |> Enum.into(%{})
+      |> normalize_options()
+
+    Kino.JS.Live.new(__MODULE__, payload)
+  end
 
   def new(opts) when is_list(opts) do
     payload =
@@ -69,29 +81,68 @@ defmodule KinoJspreadsheetCe do
      )}
   end
 
-  def from_config_to_explorable(config, use_first_row_as_header? \\ false) when is_list(config) do
+  def config_to_table_reader(config, first_row_has_columns? \\ false)
+      when is_list(config) do
     data = Keyword.get(config, :data, [])
-    columns = Keyword.get(config, :columns, [])
 
-    headers =
-      cond do
-        use_first_row_as_header? and is_list(data) and data != [] ->
-          List.first(data)
+    columns =
+      Keyword.get(config, :columns, [])
+      |> Enum.map(&get_title_from_column/1)
 
-        is_list(columns) and columns != [] and
-            Enum.all?(columns, fn col -> Map.has_key?(col, :title) end) ->
-          Enum.map(columns, fn col -> col.title end)
-
-        is_list(data) and data != [] ->
-          Enum.map(1..length(data), fn x -> "col#{x}" end)
-
-        true ->
-          []
+    {columns, data} =
+      if first_row_has_columns? do
+        get_columns_from_first_row(data)
+      else
+        {columns, data}
       end
 
+    columns =
+      columns
+      |> Enum.with_index()
+      |> Enum.map(fn {idx, col} -> fill_in_empty_columns(idx, col) end)
+
+    %KinoJspreadsheetCe.TableReader{
+      rows: cast_all_numbers(data),
+      columns: columns
+    }
+  end
+
+  defp get_title_from_column(%{title: title}), do: title
+  defp get_title_from_column(%{}), do: ""
+  defp get_title_from_column(title), do: title
+
+  defp get_columns_from_first_row([]), do: {[], []}
+  defp get_columns_from_first_row([columns | data]), do: {columns, data}
+
+  defp fill_in_empty_columns("", idx), do: "col#{idx + 1}"
+  defp fill_in_empty_columns(nil, idx), do: "col#{idx + 1}"
+  defp fill_in_empty_columns(col, _idx), do: col
+
+  defp cast_all_numbers(data) do
     Enum.map(data, fn row ->
-      Enum.zip(headers, row) |> Enum.into(%{})
+      Enum.map(row, &cast_if_number/1)
     end)
+  end
+
+  defp cast_if_number(val) when is_binary(val) do
+    case Float.parse(val) do
+      {num, ""} -> try_cast_int(num)
+      :error -> val
+    end
+  end
+
+  defp cast_if_number(val) do
+    val
+  end
+
+  defp try_cast_int(float_val) when is_float(float_val) do
+    int_val = trunc(float_val)
+
+    if float_val == int_val do
+      int_val
+    else
+      float_val
+    end
   end
 
   @impl true
