@@ -14,7 +14,7 @@ export async function init(ctx, exPayload) {
 	if (payload.data) worksheet.data = payload.data;
 	if (payload.minDimensions) worksheet.minDimensions = payload.minDimensions;
 
-	const worksheetUpdated = (ws, changes) =>
+	const worksheetUpdated = (ws, ...changes) =>
 		ctx.pushEvent('update_sheet', ws.getConfig());
 
 	let config = {
@@ -29,10 +29,10 @@ export async function init(ctx, exPayload) {
 		onmerge: worksheetUpdated,
 		onmovecolumn: worksheetUpdated,
 		onmoverow: worksheetUpdated,
+		onredo: worksheetUpdated,
 		onsort: worksheetUpdated,
+		onundo: worksheetUpdated,
 	};
-	if (payload.contextMenu === false) config.contextMenu = () => false;
-	if (payload.tabs) config.tabs = payload.tabs;
 	if (payload.toolbar) config.toolbar = payload.toolbar;
 
 	const container = document.createElement('div');

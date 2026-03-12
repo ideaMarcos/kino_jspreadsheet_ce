@@ -3,7 +3,7 @@ defmodule KinoJspreadsheetCe.SmartCell do
   A Kino SmartCell for configuring and generating KinoJspreadsheetCe widgets.
 
   Users can interactively set options like minimum dimensions, toolbar visibility,
-  tabs, and context menu settings. The SmartCell generates the Elixir code to create
+  and context menu settings. The SmartCell generates the Elixir code to create
   the spreadsheet widget with the configured options.
   """
 
@@ -18,9 +18,7 @@ defmodule KinoJspreadsheetCe.SmartCell do
        variable_name: attrs["variable_name"] || "s1",
        min_dimensions_rows: attrs["min_dimensions_rows"] || 5,
        min_dimensions_cols: attrs["min_dimensions_cols"] || 7,
-       toolbar: attrs["toolbar"] || false,
-       tabs: attrs["tabs"] || false,
-       context_menu: Map.get(attrs, "context_menu", true)
+       toolbar: attrs["toolbar"] || false
      )}
   end
 
@@ -30,9 +28,7 @@ defmodule KinoJspreadsheetCe.SmartCell do
       "variable_name" => ctx.assigns.variable_name,
       "min_dimensions_rows" => ctx.assigns.min_dimensions_rows,
       "min_dimensions_cols" => ctx.assigns.min_dimensions_cols,
-      "toolbar" => ctx.assigns.toolbar,
-      "tabs" => ctx.assigns.tabs,
-      "context_menu" => ctx.assigns.context_menu
+      "toolbar" => ctx.assigns.toolbar
     }
   end
 
@@ -42,9 +38,7 @@ defmodule KinoJspreadsheetCe.SmartCell do
 
     opts = [
       "min_dimensions: [#{attrs["min_dimensions_cols"]}, #{attrs["min_dimensions_rows"]}]",
-      "toolbar: #{attrs["toolbar"]}",
-      "tabs: #{attrs["tabs"]}",
-      "context_menu: #{attrs["context_menu"]}"
+      "toolbar: #{attrs["toolbar"]}"
     ]
 
     "#{var_name} = KinoJspreadsheetCe.new(#{Enum.join(opts, ", ")})"
@@ -62,9 +56,7 @@ defmodule KinoJspreadsheetCe.SmartCell do
         variable_name: attrs["variable_name"],
         min_dimensions_rows: attrs["min_dimensions_rows"],
         min_dimensions_cols: attrs["min_dimensions_cols"],
-        toolbar: attrs["toolbar"],
-        tabs: attrs["tabs"],
-        context_menu: attrs["context_menu"]
+        toolbar: attrs["toolbar"]
       )
 
     broadcast_event(ctx, "update", to_attrs(ctx))

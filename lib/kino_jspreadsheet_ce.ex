@@ -5,8 +5,10 @@ defmodule KinoJspreadsheetCe do
   ## Example
 
       KinoJspreadsheetCe.new(
+        columns: [
+          %{title: "Name"}, %{title: "Department"}, %{title: "Salary"}
+        ],
         data: [
-          ["Name", "Department", "Salary"],
           ["Alice", "Engineering", 80000],
           ["Bob", "Marketing", 60000],
           ["Charlie", "Sales", 70000]
@@ -18,9 +20,9 @@ defmodule KinoJspreadsheetCe do
     - `:data` - A list of lists representing the spreadsheet data. Each inner list is a row.
     - `:columns` - A list of column configurations. Defaults to auto-generated columns.
     - `:min_dimensions` - An array `[cols, rows]` for minimum dimensions.
-    - `:toolbar` - Boolean to show/hide the toolbar.
+    - `:toolbar` - Boolean to show/hide the toolbar. Defaults to `false`.
   """
-  use Kino.JS, assets_path: "lib/assets/build"
+  use Kino.JS, assets_path: "lib/assets/kino_build"
   use Kino.JS.Live
 
   @doc """
@@ -42,23 +44,12 @@ defmodule KinoJspreadsheetCe do
     Kino.JS.Live.new(__MODULE__, payload)
   end
 
-  def new(opts) when is_list(opts) do
-    payload =
-      opts
-      |> Enum.into(%{})
-      |> normalize_options()
-
-    Kino.JS.Live.new(__MODULE__, payload)
-  end
-
   defp normalize_options(opts) do
     %{
       data: Map.get(opts, :data),
       columns: Map.get(opts, :columns),
       min_dimensions: Map.get(opts, :min_dimensions),
-      toolbar: Map.get(opts, :toolbar, false),
-      tabs: Map.get(opts, :tabs),
-      context_menu: Map.get(opts, :context_menu)
+      toolbar: Map.get(opts, :toolbar, false)
     }
   end
 
@@ -75,13 +66,11 @@ defmodule KinoJspreadsheetCe do
        data: payload.data,
        columns: payload.columns,
        min_dimensions: payload.min_dimensions,
-       toolbar: payload.toolbar,
-       tabs: payload.tabs,
-       context_menu: payload.context_menu
+       toolbar: payload.toolbar
      )}
   end
 
-  def config_to_table_reader(config, first_row_has_columns? \\ false)
+  def config_to_table_reader(config, first_row_has_columns?)
       when is_list(config) do
     data = Keyword.get(config, :data, [])
 
@@ -127,7 +116,7 @@ defmodule KinoJspreadsheetCe do
   defp cast_if_number(val) when is_binary(val) do
     case Float.parse(val) do
       {num, ""} -> try_cast_int(num)
-      :error -> val
+      _ -> val
     end
   end
 
@@ -155,9 +144,7 @@ defmodule KinoJspreadsheetCe do
       data: s.data,
       columns: s.columns,
       min_dimensions: s.min_dimensions,
-      toolbar: s.toolbar,
-      tabs: s.tabs,
-      context_menu: s.context_menu
+      toolbar: s.toolbar
     }
   end
 
@@ -166,7 +153,7 @@ defmodule KinoJspreadsheetCe do
     columns =
       Enum.map(config["columns"], fn col ->
         for {key, val} <- col, into: %{} do
-          {String.to_existing_atom(key), val}
+          {String.to_atom(key), val}
         end
       end)
 

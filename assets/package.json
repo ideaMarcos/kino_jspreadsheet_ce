@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build": "esbuild main.js --bundle --minify --outfile=../lib/assets/build/main.js --format=esm",
+    "build": "esbuild ./kino/main.js --bundle --minify --outfile=../lib/assets/kino_build/main.js --format=esm && esbuild ./smart_cell/main.js --bundle --minify --outfile=../lib/assets/smart_cell_build/main.js --format=esm",
     "dev": "pnpm run build -- --watch"
   },
   "dependencies": {
@@ -9,7 +9,6 @@
     "jsuites": "^5.13.5"
   },
   "devDependencies": {
-    "@livebook/kino-bundler": "^0.2.1",
-    "esbuild": "^0.27.3"
+    "esbuild": "^0.27.4"
   }
 }

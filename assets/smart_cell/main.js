@@ -51,15 +51,7 @@ export function init(ctx, attrs) {
 		'toolbar',
 		attrs['toolbar'] === true,
 	);
-	const tabsSwitch = createSwitch('Show Tabs', 'tabs', attrs['tabs'] === true);
-	const contextMenuSwitch = createSwitch(
-		'Show Context Menu',
-		'context_menu',
-		attrs['context_menu'] !== false,
-	);
 	optsRow.appendChild(toolbarSwitch.container);
-	optsRow.appendChild(tabsSwitch.container);
-	optsRow.appendChild(contextMenuSwitch.container);
 	optionsSection.appendChild(optsRow);
 
 	form.appendChild(optionsSection);
@@ -73,8 +65,6 @@ export function init(ctx, attrs) {
 			min_dimensions_rows: parseInt(rowsInput.input.value) || 1,
 			min_dimensions_cols: parseInt(colsInput.input.value) || 1,
 			toolbar: toolbarSwitch.input.checked,
-			tabs: tabsSwitch.input.checked,
-			context_menu: contextMenuSwitch.input.checked,
 		});
 	};
 
@@ -82,8 +72,6 @@ export function init(ctx, attrs) {
 	rowsInput.input.addEventListener('change', pushUpdate);
 	colsInput.input.addEventListener('change', pushUpdate);
 	toolbarSwitch.input.addEventListener('change', pushUpdate);
-	tabsSwitch.input.addEventListener('change', pushUpdate);
-	contextMenuSwitch.input.addEventListener('change', pushUpdate);
 }
 
 function createRow(additionalClass = '') {

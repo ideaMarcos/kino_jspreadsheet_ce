@@ -1,22 +1,20 @@
 <!-- ideaMarcos -->
 
-<!-- livebook:{"autosave_interval_s":null} -->
-
 # KinoJspreadsheetCe
 
 ```elixir
 Mix.install([
   {:kino_jspreadsheet_ce, "~> 0.1.0"},
-  # {:kino_jspreadsheet_ce, path: __DIR__},
-  {:kino_vega_lite, "~> 0.1.11"},
+  {:kino_vega_lite, "~> 0.1.13"},
   {:explorer, "~> 0.11.1"}
 ])
 ```
 
-## Basic Example
+## Programmatic creation and data population
 
 ```elixir
 s1 = KinoJspreadsheetCe.new(
+  # toolbar: true,
   columns: [
     %{title: "Team"}, %{title: "TG"}, %{title: "W"}, %{title: "L"}, %{title: "SV"},
     %{title: "G"}, %{title: "GS"}, %{title: "IP"}, %{title: "K/9"}, %{title: "BB/9"},
@@ -55,25 +53,32 @@ s1 = KinoJspreadsheetCe.new(
     ["SDP", 648, 279, 369, 157, 2726, 648, 5768, 8.331, 3.367, 1.194, 0.301, 0.712, 0.463, 0.140, 92.834, 4.411, 4.181, 4.275, 4.112, 38.641],
     ["MIA", 646, 290, 356, 154, 2817, 646, 5746.2, 7.802, 3.657, 1.062, 0.296, 0.717, 0.427, 0.112, 93.303, 4.418, 4.418, 4.304, 4.499, 35.667],
     ["CIN", 648, 267, 381, 134, 2701, 648, 5766.1, 7.884, 3.657, 1.422, 0.296, 0.718, 0.437, 0.152, 93.608, 4.768, 4.489, 4.807, 4.464, 25.771]
-  ],
-  # tabs: true,
-  # toolbar: true,
-  context_menu: true
+  ]
 )
 ```
 
+## Edit the spreadsheet and reevaluate the cells
+
 ```elixir
 df1 = KinoJspreadsheetCe.get_config_from_js(s1)
-|> KinoJspreadsheetCe.config_to_table_reader()
+|> KinoJspreadsheetCe.config_to_table_reader(false)
 |> Explorer.DataFrame.new()
 ```
 
-<!-- livebook:{"attrs":"eyJjaGFydF90aXRsZSI6bnVsbCwiaGVpZ2h0IjpudWxsLCJsYXllcnMiOlt7ImFjdGl2ZSI6dHJ1ZSwiY2hhcnRfdHlwZSI6InBvaW50IiwiY29sb3JfZmllbGQiOm51bGwsImNvbG9yX2ZpZWxkX2FnZ3JlZ2F0ZSI6bnVsbCwiY29sb3JfZmllbGRfYmluIjpudWxsLCJjb2xvcl9maWVsZF9zY2FsZV9zY2hlbWUiOm51bGwsImNvbG9yX2ZpZWxkX3R5cGUiOm51bGwsImRhdGFfdmFyaWFibGUiOiJkZjEiLCJnZW9kYXRhX2NvbG9yIjoiYmx1ZSIsImxhdGl0dWRlX2ZpZWxkIjpudWxsLCJsb25naXR1ZGVfZmllbGQiOm51bGwsInhfZmllbGQiOiJ4RVJBIiwieF9maWVsZF9hZ2dyZWdhdGUiOm51bGwsInhfZmllbGRfYmluIjpudWxsLCJ4X2ZpZWxkX3NjYWxlX3R5cGUiOm51bGwsInhfZmllbGRfdHlwZSI6Im5vbWluYWwiLCJ5X2ZpZWxkIjoiV0FSIiwieV9maWVsZF9hZ2dyZWdhdGUiOm51bGwsInlfZmllbGRfYmluIjpudWxsLCJ5X2ZpZWxkX3NjYWxlX3R5cGUiOm51bGwsInlfZmllbGRfdHlwZSI6Im5vbWluYWwifV0sInZsX2FsaWFzIjoiRWxpeGlyLlZlZ2FMaXRlIiwid2lkdGgiOm51bGx9","chunks":null,"kind":"Elixir.KinoVegaLite.ChartCell","livebook_object":"smart_cell"} -->
+<!-- livebook:{"attrs":"eyJjaGFydF90aXRsZSI6bnVsbCwiaGVpZ2h0Ijo1MDAsImxheWVycyI6W3siYWN0aXZlIjp0cnVlLCJjaGFydF90eXBlIjoicG9pbnQiLCJjb2xvcl9maWVsZCI6bnVsbCwiY29sb3JfZmllbGRfYWdncmVnYXRlIjpudWxsLCJjb2xvcl9maWVsZF9iaW4iOm51bGwsImNvbG9yX2ZpZWxkX3NjYWxlX3NjaGVtZSI6bnVsbCwiY29sb3JfZmllbGRfdHlwZSI6bnVsbCwiZGF0YV92YXJpYWJsZSI6ImRmMSIsImdlb2RhdGFfY29sb3IiOiJibHVlIiwibGF0aXR1ZGVfZmllbGQiOm51bGwsImxvbmdpdHVkZV9maWVsZCI6bnVsbCwieF9maWVsZCI6IkVSQSIsInhfZmllbGRfYWdncmVnYXRlIjpudWxsLCJ4X2ZpZWxkX2JpbiI6bnVsbCwieF9maWVsZF9zY2FsZV90eXBlIjpudWxsLCJ4X2ZpZWxkX3R5cGUiOiJxdWFudGl0YXRpdmUiLCJ5X2ZpZWxkIjoiV0FSIiwieV9maWVsZF9hZ2dyZWdhdGUiOm51bGwsInlfZmllbGRfYmluIjpudWxsLCJ5X2ZpZWxkX3NjYWxlX3R5cGUiOm51bGwsInlfZmllbGRfdHlwZSI6InF1YW50aXRhdGl2ZSJ9XSwidmxfYWxpYXMiOiJFbGl4aXIuVmVnYUxpdGUiLCJ3aWR0aCI6NzAwfQ","chunks":null,"kind":"Elixir.KinoVegaLite.ChartCell","livebook_object":"smart_cell"} -->
 
 ```elixir
-VegaLite.new()
+VegaLite.new(width: 700, height: 500)
 |> VegaLite.data_from_values(df1, only: ["ERA", "WAR"])
 |> VegaLite.mark(:point)
-|> VegaLite.encode_field(:x, "ERA", type: :nominal)
-|> VegaLite.encode_field(:y, "WAR", type: :nominal)
+|> VegaLite.encode_field(:x, "ERA", type: :quantitative)
+|> VegaLite.encode_field(:y, "WAR", type: :quantitative)
+```
+
+## SmartCell creation
+
+<!-- livebook:{"attrs":"eyJtaW5fZGltZW5zaW9uc19jb2xzIjo3LCJtaW5fZGltZW5zaW9uc19yb3dzIjoyLCJ0b29sYmFyIjpmYWxzZSwidmFyaWFibGVfbmFtZSI6InNtYXJ0c2hlZXQifQ","chunks":null,"kind":"Elixir.KinoJspreadsheetCe.SmartCell","livebook_object":"smart_cell"} -->
+
+```elixir
+smartsheet = KinoJspreadsheetCe.new(min_dimensions: [7, 2], toolbar: false)
 ```
