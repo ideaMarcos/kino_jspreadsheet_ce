@@ -1,3 +1,5 @@
+[![Docs](https://img.shields.io/badge/hex.pm-docs-8e7ce6.svg)](https://hexdocs.pm/kino_jspreadsheet_ce)
+
 # KinoJspreadsheetCe
 
 [Jspreadsheet CE](https://github.com/jspreadsheet/ce) integration with
