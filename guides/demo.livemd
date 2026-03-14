@@ -4,7 +4,7 @@
 
 ```elixir
 Mix.install([
-  {:kino_jspreadsheet_ce, "~> 0.1.0"},
+  {:kino_jspreadsheet_ce, "~> 0.1.1"},
   {:kino_vega_lite, "~> 0.1.13"},
   {:explorer, "~> 0.11.1"}
 ])
