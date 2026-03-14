@@ -39,6 +39,9 @@ export async function init(ctx, exPayload) {
 	container.style.minHeight = '400px'; // to fit the contextMenu
 	ctx.root.appendChild(container);
 	jspreadsheet(container, config);
+
+	// Prevent Livebook keyboard shortcuts from interfering with jspreadsheet
+	document.addEventListener('keydown', event => event.stopPropagation());
 }
 
 function snakeToCamel(str) {
