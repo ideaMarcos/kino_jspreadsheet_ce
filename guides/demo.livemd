@@ -14,7 +14,6 @@ Mix.install([
 
 ```elixir
 s1 = KinoJspreadsheetCe.new(
-  # toolbar: true,
   columns: [
     %{title: "Team"}, %{title: "TG"}, %{title: "W"}, %{title: "L"}, %{title: "SV"},
     %{title: "G"}, %{title: "GS"}, %{title: "IP"}, %{title: "K/9"}, %{title: "BB/9"},
@@ -77,8 +76,8 @@ VegaLite.new(width: 700, height: 500)
 
 ## SmartCell creation
 
-<!-- livebook:{"attrs":"eyJtaW5fZGltZW5zaW9uc19jb2xzIjo3LCJtaW5fZGltZW5zaW9uc19yb3dzIjoyLCJ0b29sYmFyIjpmYWxzZSwidmFyaWFibGVfbmFtZSI6InNtYXJ0c2hlZXQifQ","chunks":null,"kind":"Elixir.KinoJspreadsheetCe.SmartCell","livebook_object":"smart_cell"} -->
+<!-- livebook:{"attrs":"eyJtaW5fZGltZW5zaW9uc19jb2xzIjo3LCJtaW5fZGltZW5zaW9uc19yb3dzIjo1LCJ2YXJpYWJsZV9uYW1lIjoic21hcnRzaGVldCJ9","chunks":null,"kind":"Elixir.KinoJspreadsheetCe.SmartCell","livebook_object":"smart_cell"} -->
 
 ```elixir
-smartsheet = KinoJspreadsheetCe.new(min_dimensions: [7, 2], toolbar: false)
+smartsheet = KinoJspreadsheetCe.new(min_dimensions: [7, 5])
 ```

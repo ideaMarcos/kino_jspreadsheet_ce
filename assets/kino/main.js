@@ -32,8 +32,45 @@ export async function init(ctx, exPayload) {
 		onredo: worksheetUpdated,
 		onsort: worksheetUpdated,
 		onundo: worksheetUpdated,
+		toolbar: function (toolbar) {
+			const allowedItems = [
+				'undo',
+				'redo',
+				'save',
+				'format_bold',
+				'format_color_text',
+				'format_color_fill',
+			];
+
+			const toolbarItems = toolbar.items.filter(
+				(item) => item.type == 'divisor' || allowedItems.includes(item.content),
+			);
+			toolbar.items = toolbarItems.concat({
+				tooltip: 'Copy Elixir code',
+				content: 'code',
+				onclick: function () {
+					const config = jspreadsheet.current.getConfig();
+					const columns = config.columns
+						.map((c) => `%{title: "${c.title || ''}"}`)
+						.join(', ');
+					const elixirColumns = `columns: [${columns}]`;
+					const data = config.data
+						.map((row) => row.map((x) => formatElixirValue(x)).join(', '))
+						.join('], [');
+					const elixirData = `data: [[${data}]]`;
+					const elixirMinDimensions = config.minDimensions
+						? `min_dimensions: [${config.minDimensions.join(', ')}]`
+						: null;
+					const sheetOptions = [elixirColumns, elixirData, elixirMinDimensions]
+						.filter(Boolean)
+						.join(',\n');
+					const elixirCode = `KinoJspreadsheetCe.new(\n${sheetOptions})`;
+					navigator.clipboard.writeText(elixirCode);
+				},
+			});
+			return toolbar;
+		},
 	};
-	if (payload.toolbar) config.toolbar = payload.toolbar;
 
 	const container = document.createElement('div');
 	container.style.minHeight = '400px'; // to fit the contextMenu
@@ -41,7 +78,17 @@ export async function init(ctx, exPayload) {
 	jspreadsheet(container, config);
 
 	// Prevent Livebook keyboard shortcuts from interfering with jspreadsheet
-	document.addEventListener('keydown', event => event.stopPropagation());
+	document.addEventListener('keydown', (event) => event.stopPropagation());
+}
+
+function formatElixirValue(val) {
+	if (val === null || val == '') return 'nil';
+	switch (typeof val) {
+		case 'string':
+			return `"${val}"`;
+		default:
+			return val;
+	}
 }
 
 function snakeToCamel(str) {

@@ -36,25 +36,6 @@ export function init(ctx, attrs) {
 	headerRow.appendChild(colsInput.container);
 	form.appendChild(headerRow);
 
-	// Options section
-	const optionsSection = document.createElement('div');
-	optionsSection.className = 'section';
-
-	const sectionTitle = document.createElement('h3');
-	sectionTitle.className = 'section__title';
-	sectionTitle.textContent = 'Options';
-	optionsSection.appendChild(sectionTitle);
-
-	const optsRow = createRow();
-	const toolbarSwitch = createSwitch(
-		'Show Toolbar',
-		'toolbar',
-		attrs['toolbar'] === true,
-	);
-	optsRow.appendChild(toolbarSwitch.container);
-	optionsSection.appendChild(optsRow);
-
-	form.appendChild(optionsSection);
 	container.appendChild(form);
 	ctx.root.appendChild(container);
 
@@ -64,14 +45,12 @@ export function init(ctx, attrs) {
 			variable_name: varInput.input.value || 's1',
 			min_dimensions_rows: parseInt(rowsInput.input.value) || 1,
 			min_dimensions_cols: parseInt(colsInput.input.value) || 1,
-			toolbar: toolbarSwitch.input.checked,
 		});
 	};
 
 	varInput.input.addEventListener('change', pushUpdate);
 	rowsInput.input.addEventListener('change', pushUpdate);
 	colsInput.input.addEventListener('change', pushUpdate);
-	toolbarSwitch.input.addEventListener('change', pushUpdate);
 }
 
 function createRow(additionalClass = '') {
@@ -102,32 +81,6 @@ function createInput(label, id, type, value, attributes = {}) {
 
 	container.appendChild(labelEl);
 	container.appendChild(input);
-
-	return { container, input };
-}
-
-function createSwitch(label, id, checked) {
-	const switchLabel = document.createElement('label');
-	switchLabel.className = 'switch';
-
-	const input = document.createElement('input');
-	input.id = id;
-	input.type = 'checkbox';
-	input.checked = checked;
-
-	// const toggle = document.createElement('span');
-	// toggle.className = 'switch__toggle';
-
-	const labelSpan = document.createElement('span');
-	labelSpan.className = 'switch__label';
-	labelSpan.textContent = label;
-
-	switchLabel.appendChild(input);
-	// switchLabel.appendChild(toggle);
-	switchLabel.appendChild(labelSpan);
-
-	const container = document.createElement('div');
-	container.appendChild(switchLabel);
 
 	return { container, input };
 }

@@ -20,7 +20,6 @@ defmodule KinoJspreadsheetCe do
     - `:data` - A list of lists representing the spreadsheet data. Each inner list is a row.
     - `:columns` - A list of column configurations. Defaults to auto-generated columns.
     - `:min_dimensions` - An array `[cols, rows]` for minimum dimensions.
-    - `:toolbar` - Boolean to show/hide the toolbar. Defaults to `false`.
   """
   use Kino.JS, assets_path: "lib/assets/kino_build"
   use Kino.JS.Live
@@ -48,8 +47,7 @@ defmodule KinoJspreadsheetCe do
     %{
       data: Map.get(opts, :data),
       columns: Map.get(opts, :columns),
-      min_dimensions: Map.get(opts, :min_dimensions),
-      toolbar: Map.get(opts, :toolbar, false)
+      min_dimensions: Map.get(opts, :min_dimensions)
     }
   end
 
@@ -65,8 +63,7 @@ defmodule KinoJspreadsheetCe do
      assign(ctx,
        data: payload.data,
        columns: payload.columns,
-       min_dimensions: payload.min_dimensions,
-       toolbar: payload.toolbar
+       min_dimensions: payload.min_dimensions
      )}
   end
 
@@ -143,8 +140,7 @@ defmodule KinoJspreadsheetCe do
     %{
       data: s.data,
       columns: s.columns,
-      min_dimensions: s.min_dimensions,
-      toolbar: s.toolbar
+      min_dimensions: s.min_dimensions
     }
   end
 
