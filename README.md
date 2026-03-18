@@ -5,7 +5,7 @@
 [Jspreadsheet CE](https://github.com/jspreadsheet/ce) integration with
 [Kino](https://github.com/livebook-dev/kino) for [Livebook](https://github.com/livebook-dev/livebook).
 
-[Video demo](https://bsky.app/profile/ideamarcos.bsky.social/post/3mgxq4r2ops2y)
+[Video demo thread](https://bsky.app/profile/ideamarcos.bsky.social/post/3mgxq4r2ops2y)
 
 ## Installation
 
