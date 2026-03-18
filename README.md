@@ -13,7 +13,7 @@ To bring KinoJspreadsheetCe to Livebook all you need to do is `Mix.install/2`:
 
 ```elixir
 Mix.install([
-    {:kino_jspreadsheet_ce, "~> 0.1.1"}
+    {:kino_jspreadsheet_ce, "~> 0.1.2"}
 ])
 ```
 
