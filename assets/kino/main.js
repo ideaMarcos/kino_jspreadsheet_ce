@@ -104,7 +104,8 @@ function copyAsElixir(el, obj, value) {
 }
 
 function escapeElixirString(str) {
-	return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+	if (str === null || str === '') return '';
+	return String(str).replace(/[\\"]/g, '\\$&');
 }
 
 function formatElixirValue(val) {
