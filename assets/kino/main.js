@@ -9,7 +9,7 @@ export async function init(ctx, exPayload) {
 	].forEach((url) => ctx.importCSS(url));
 
 	const payload = convertKeysToCamelCase(exPayload);
-	let worksheet = {};
+	const worksheet = {};
 	if (payload.columns) worksheet.columns = payload.columns;
 	if (payload.data) worksheet.data = payload.data;
 	if (payload.minDimensions) worksheet.minDimensions = payload.minDimensions;
@@ -34,39 +34,27 @@ export async function init(ctx, exPayload) {
 		onundo: worksheetUpdated,
 		toolbar: function (toolbar) {
 			const allowedItems = [
-				'undo',
+				'divisor',
+				'format_bold',
+				'format_color_fill',
+				'format_color_text',
 				'redo',
 				'save',
-				'format_bold',
-				'format_color_text',
-				'format_color_fill',
+				'undo',
 			];
 
-			const toolbarItems = toolbar.items.filter(
-				(item) => item.type == 'divisor' || allowedItems.includes(item.content),
+			const toolbarItems = toolbar.items.filter((item) =>
+				allowedItems.includes(item.content),
 			);
 			toolbar.items = toolbarItems.concat({
-				tooltip: 'Copy Elixir code',
+				type: 'select',
 				content: 'code',
-				onclick: function () {
-					const config = jspreadsheet.current.getConfig();
-					const columns = config.columns
-						.map((c) => `%{title: "${c.title || ''}"}`)
-						.join(', ');
-					const elixirColumns = `columns: [${columns}]`;
-					const data = config.data
-						.map((row) => row.map((x) => formatElixirValue(x)).join(', '))
-						.join('], [');
-					const elixirData = `data: [[${data}]]`;
-					const elixirMinDimensions = config.minDimensions
-						? `min_dimensions: [${config.minDimensions.join(', ')}]`
-						: null;
-					const sheetOptions = [elixirColumns, elixirData, elixirMinDimensions]
-						.filter(Boolean)
-						.join(',\n');
-					const elixirCode = `KinoJspreadsheetCe.new(\n${sheetOptions})`;
-					navigator.clipboard.writeText(elixirCode);
+				tooltip: 'Copy Elixir code',
+				options: ['Copy as Elixir', 'Copy as Elixir (header from first row)'],
+				render: function (e) {
+					return e;
 				},
+				onchange: copyAsElixir,
 			});
 			return toolbar;
 		},
@@ -81,11 +69,50 @@ export async function init(ctx, exPayload) {
 	document.addEventListener('keydown', (event) => event.stopPropagation());
 }
 
+function copyAsElixir(el, obj, value) {
+	const useFirstRowAsHeader = value.includes('header');
+	const config = jspreadsheet.current.getConfig();
+	let columns, data;
+
+	if (useFirstRowAsHeader && config.data.length > 0) {
+		columns = config.data[0]
+			.map((c) => `%{title: "${escapeElixirString(c || '')}"}`)
+			.join(', ');
+		data = config.data.slice(1);
+	} else {
+		columns = config.columns
+			.map((c) => `%{title: "${escapeElixirString(c.title || '')}"}`)
+			.join(', ');
+		data = config.data;
+	}
+
+	const elixirColumns = `columns: [${columns}]`;
+	const elixirData = `data: [[${data
+		.map((row) => row.map((x) => formatElixirValue(x)).join(', '))
+		.join('], [')}]]`;
+	const elixirMinDimensions = config.minDimensions
+		? `min_dimensions: [${config.minDimensions.join(', ')}]`
+		: null;
+	const sheetOptions = [elixirColumns, elixirData, elixirMinDimensions]
+		.filter(Boolean)
+		.join(',\n');
+	const elixirCode = `KinoJspreadsheetCe.new(\n${sheetOptions})`;
+	navigator.clipboard.writeText(elixirCode);
+
+	// Reset picker so it can be re-selected
+	obj.setValue('');
+}
+
+function escapeElixirString(str) {
+	return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
 function formatElixirValue(val) {
-	if (val === null || val == '') return 'nil';
+	if (val === null || val === '') return 'nil';
 	switch (typeof val) {
 		case 'string':
-			return `"${val}"`;
+			return `"${escapeElixirString(val)}"`;
+
 		default:
 			return val;
 	}
