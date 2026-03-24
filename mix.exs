@@ -1,7 +1,7 @@
 defmodule KinoJspreadsheetCe.MixProject do
   use Mix.Project
 
-  @version "0.1.2"
+  @version "0.1.3"
   @description "Jspreadsheet CE integration for Livebook"
 
   def project do
